@@ -1,6 +1,6 @@
 module Base57
   
-  SYMBOLS = "0123456789ABCDEFGHJKLMNPQRSTVWXYZabcdefghijkmnopqrstvwxyz"
+  SYMBOLS = "0123456789abcdefghijkmnopqrstvwxyzABCDEFGHJKLMNPQRSTVWXYZ"
   BASE = SYMBOLS.size
   
   # Converts the given value (specified by value and base) into a base57 value.
