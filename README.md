@@ -3,7 +3,7 @@ base57
 
 A gem for converting numeric values to base57 using the following character set:
 
-    1234567890ABCDEFGHJKLMNPQRSTVWXYZabcdefghijkmnopqrstvwxyz
+    0123456789abcdefghijkmnopqrstvwxyzABCDEFGHJKLMNPQRSTVWXYZ
 
-* `I`, `O`, and `l` are excluded to prevent ambiguous values.
-* `U` and `u` are exclude to prevent accidental profanity :)
+* Lower-case "L" (`l`), capital "I" (`I`), and the capital letter "O" (`O`) are excluded to prevent ambiguous values.
+* Both capital and lower-case "U" (`u` and `U`) are excluded to prevent the most egregious accidental profanity :)
