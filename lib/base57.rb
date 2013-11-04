@@ -5,20 +5,20 @@ module Base57
   
   # Converts the given value (specified by value and base) into a base57 value.
   #
-  # @param Fixnum/Bignum/String value
-  # @param Fixnum base
+  # @param [Integer or String] value
+  # @param [Fixnum] base
   #
   def self.encode(value, base = 10)
-    if value.class == String
-      base10_value = value.to_i(base)
-    elsif value.class.superclass == Integer
-      base10_value = value.to_i
+    base10_value = case value
+    when Integer
+      value.to_i
+    when String
+      value.to_i(base)
     else
-      raise ArgumentError, "invalid value (must be a base10 integer or" +
-        " convertable to a base10 integer)"
+      raise ArgumentError, 'invalid value (must be an integer)'
     end
     
-    base57_value = ""
+    base57_value = ''
     while base10_value >= BASE
       mod = base10_value % BASE
       base57_value = SYMBOLS[mod] + base57_value
