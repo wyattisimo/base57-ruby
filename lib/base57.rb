@@ -1,8 +1,8 @@
 module Base57
-  
+
   SYMBOLS = "0123456789abcdefghijkmnopqrstvwxyzABCDEFGHJKLMNPQRSTVWXYZ"
   BASE = SYMBOLS.size
-  
+
   # Converts the given value (specified by value and base) into a base57 value.
   #
   # @param [Integer or String] value
@@ -17,7 +17,7 @@ module Base57
     else
       raise ArgumentError, 'invalid value (must be an integer)'
     end
-    
+
     base57_value = ''
     while base10_value >= BASE
       mod = base10_value % BASE
@@ -26,5 +26,36 @@ module Base57
     end
     SYMBOLS[base10_value] + base57_value
   end
-  
+
+
+  module Base32
+
+    SYMBOLS = "0123456789ABCDEFGHJKLMNPQRSTVWXY"
+    BASE = SYMBOLS.size
+
+    # Converts the given value (specified by value and base) into a base32 value.
+    #
+    # @param [Integer or String] value
+    # @param [Fixnum] base
+    #
+    def self.encode(value, base = 10)
+      base10_value = case value
+      when Integer
+        value.to_i
+      when String
+        value.to_i(base)
+      else
+        raise ArgumentError, 'invalid value (must be an integer)'
+      end
+
+      base32_value = ''
+      while base10_value >= BASE
+        mod = base10_value % BASE
+        base32_value = SYMBOLS[mod] + base32_value
+        base10_value = (base10_value - mod) / BASE
+      end
+      SYMBOLS[base10_value] + base32_value
+    end
+
+  end
 end
