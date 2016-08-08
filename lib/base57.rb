@@ -1,61 +1,52 @@
 module Base57
 
-  SYMBOLS = "0123456789abcdefghijkmnopqrstvwxyzABCDEFGHJKLMNPQRSTVWXYZ"
-  BASE = SYMBOLS.size
+  NUMERIC   = "0123456789"
+  ALPHA_LOW = "abcdefghijkmnopqrstvwxyz"
+  ALPHA_CAP = "ABCDEFGHJKLMNPQRSTVWXYZ"
 
-  # Converts the given value (specified by value and base) into a base57 value.
+  DEFAULT_SYMBOL_COMPOSITION = NUMERIC + ALPHA_LOW + ALPHA_CAP
+
+  # Converts the given value of the specified from_base into a new value of the specified to_base.
   #
   # @param [Integer or String] value
-  # @param [Fixnum] base
+  # @param [Hash] opts: {
+  #   [Integer] from_base
+  #   [Integer] to_base
+  #   [String]  composition
+  # }
   #
-  def self.encode(value, base = 10)
+  def self.encode(value, opts = {})
+    opts        = { from_base: 10, to_base: 57, composition: DEFAULT_SYMBOL_COMPOSITION }.merge(opts)
+    from_base   = opts[:from_base]
+    to_base     = opts[:to_base]
+    composition = opts[:composition]
+
+    if from_base > composition.size
+      raise ArgumentError, "invalid from_base: #{from_base} (must be between 0 and #{composition.size})"
+    end
+    if to_base > composition.size
+      raise ArgumentError, "invalid to_base: #{to_base} (must be between 0 and #{composition.size})"
+    end
+
+    symbols = composition[0..to_base-1]
+
     base10_value = case value
     when Integer
-      value.to_i
+      value
     when String
-      value.to_i(base)
+      i = value.length
+      value.split("").inject(0) {|sum, d| sum + (composition.index(d) * (from_base ** (i -= 1))) }
     else
-      raise ArgumentError, 'invalid value (must be an integer)'
+      raise ArgumentError, "invalid value (must be an integer)"
     end
 
-    base57_value = ''
-    while base10_value >= BASE
-      mod = base10_value % BASE
-      base57_value = SYMBOLS[mod] + base57_value
-      base10_value = (base10_value - mod) / BASE
+    baseX_value = ""
+    while base10_value >= to_base
+      mod = base10_value % to_base
+      baseX_value = symbols[mod] + baseX_value
+      base10_value = (base10_value - mod) / to_base
     end
-    SYMBOLS[base10_value] + base57_value
+    symbols[base10_value] + baseX_value
   end
 
-
-  module Base32
-
-    SYMBOLS = "0123456789ABCDEFGHJKLMNPQRSTVWXY"
-    BASE = SYMBOLS.size
-
-    # Converts the given value (specified by value and base) into a base32 value.
-    #
-    # @param [Integer or String] value
-    # @param [Fixnum] base
-    #
-    def self.encode(value, base = 10)
-      base10_value = case value
-      when Integer
-        value.to_i
-      when String
-        value.to_i(base)
-      else
-        raise ArgumentError, 'invalid value (must be an integer)'
-      end
-
-      base32_value = ''
-      while base10_value >= BASE
-        mod = base10_value % BASE
-        base32_value = SYMBOLS[mod] + base32_value
-        base10_value = (base10_value - mod) / BASE
-      end
-      SYMBOLS[base10_value] + base32_value
-    end
-
-  end
 end
